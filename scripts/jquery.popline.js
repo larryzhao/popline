@@ -25,14 +25,19 @@
     if ($.popline.utils.isNull($.popline.current)) {
       return;
     }
+
     var isTargetOrChild = $.contains($.popline.current.target.get(0), event.target) || $.popline.current.target.get(0) === event.target;
     var isBarOrChild = $.contains($.popline.current.bar.get(0), event.target) || $.popline.current.bar.get(0) === event.target;
-    if ((isTargetOrChild || isBarOrChild) && window.getSelection().toString().length > 0) {
+
+    // $.popline.current.currentSelection = $.holySelection.getSelection();
+ 
+    if ((isTargetOrChild || isBarOrChild) && $.popline.current.currentSelection.length() > 0) {
+    // if ((isTargetOrChild || isBarOrChild)) {
       var target= $.popline.current.target, bar = $.popline.current.bar;
       if (bar.is(":hidden") || bar.is(":animated")) {
         bar.stop(true, true);
         var left = null, top = null;
-        var rect = window.getSelection().getRangeAt(0).getBoundingClientRect();
+        // var rect = window.getSelection().getRangeAt(0).getBoundingClientRect();
         left = event.pageX - bar.width() / 2;
         if (left < 0) left = 10;
         top = event.pageY - bar.outerHeight() - parseInt(target.css('font-size')) / 2;
@@ -367,6 +372,7 @@
         return $.popline.webkitBoundingRect();
       }
     },
+
 
     utils: {
       isNull: function(data) {
