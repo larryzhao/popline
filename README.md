@@ -64,7 +64,16 @@ Todo
 
 ## Theme customize
 
-Todo
+#### default
+
+![default](https://raw.github.com/kenshin54/popline/master/img/default.png "default")
+
+#### popclip
+
+![popclip](https://raw.github.com/kenshin54/popline/master/img/popclip.png "popclip")
+
+
+Hack the theme css and create yours.
 
 ## Example
 
@@ -72,7 +81,7 @@ Todo
 
 ## Compatibility
 
-Tested on Chrome 27.0, Safari 6.0.4, Firefox 21.0
+Tested on Chrome 27.0, Safari 6.0.4, Firefox 21.0, Opera 15.0
 
 ## Contributing
 
