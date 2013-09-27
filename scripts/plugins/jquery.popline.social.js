@@ -24,7 +24,8 @@
       iconClass: "icon-search",
       mode: "view",
       action: function(event) {
-        $('#output').append('<li>' + $.holySelection.getSelection().htmlText + '</li>');
+        alert($.popline.current.currentSelection.htmlText);
+        // $('#output').append('<li>' + $.holySelection.getSelection().htmlText + '</li>');
       }
     }
     // search: {

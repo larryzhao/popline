@@ -17,7 +17,7 @@
     },
 
     "_getSelectionText": function(){ return new HolySelection(window.getSelection().toString()) },
-    "_getSelectionTextIE8": function(){ return new HolySelection(document.selection.createRange().htmlText); }
+    "_getSelectionTextIE8": function(){ return new HolySelection(document.selection.createRange().text); }
   }
 })(jQuery);
 

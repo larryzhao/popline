@@ -29,7 +29,7 @@
     var isTargetOrChild = $.contains($.popline.current.target.get(0), event.target) || $.popline.current.target.get(0) === event.target;
     var isBarOrChild = $.contains($.popline.current.bar.get(0), event.target) || $.popline.current.bar.get(0) === event.target;
 
-    // $.popline.current.currentSelection = $.holySelection.getSelection();
+    $.popline.current.currentSelection = $.holySelection.getSelection();
  
     if ((isTargetOrChild || isBarOrChild) && $.popline.current.currentSelection.length() > 0) {
     // if ((isTargetOrChild || isBarOrChild)) {
