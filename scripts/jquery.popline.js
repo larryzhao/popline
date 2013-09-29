@@ -71,7 +71,8 @@
     var positions = {
       "fixed": {
         mouseup: function(event) {
-          var rect = window.getSelection().getRangeAt(0).getBoundingClientRect();
+          // var rect = window.getSelection().getRangeAt(0).getBoundingClientRect();
+          var rect = $.popline.current.currentSelection.boundingRect;
           var left = event.pageX - bar.width() / 2;
           var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
           if (left < 0) left = 10;

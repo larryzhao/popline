@@ -20,12 +20,11 @@
   }
 
   $.popline.addButton({
-    weibo: {
+    message: {
       iconClass: "icon-search",
       mode: "view",
       action: function(event) {
         alert($.popline.current.currentSelection.htmlText);
-        // $('#output').append('<li>' + $.holySelection.getSelection().htmlText + '</li>');
       }
     }
     // search: {

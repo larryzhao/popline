@@ -1,6 +1,7 @@
 ;(function($) {
-  function HolySelection(text) {
+  function HolySelection(text, boundingRect) {
     this.text = text;
+    this.boundingRect = boundingRect;
   }
   
   // HolySelection.prototype.htmlText = function() {
@@ -21,11 +22,33 @@
     },
 
     "_getSelection": function(){ 
-      return new HolySelection(window.getSelection().toString()) 
+      var sel = window.getSelection();
+      var boundingRect = sel.getRangeAt(0).getBoundingClientRect();
+      var text = sel.toString();
+      var rect = { 
+        "top": boundingRect.top, 
+        "bottom": boundingRect.bottom, 
+        "left": boundingRect.left, 
+        "right": boundingRect.right, 
+        "width": boundingRect.width, 
+        "height": boundingRect.height, 
+      };
+
+      return new HolySelection(text, rect); 
     },
 
     "_getSelectionIE8": function(){ 
-      return new HolySelection(document.selection.createRange().text); 
+      var sel = document.selection.createRange();
+      var text = sel.text;
+      var rect = {
+        "top": sel.offsetTop, 
+        "bottom": undefined, 
+        "left": sel.offsetLeft, 
+        "right": undefined, 
+        "width": sel.boundingWidth, 
+        "height": sel.boundingHeight, 
+      };
+      return new HolySelection(text, rect); 
     }
   }
 })(jQuery);

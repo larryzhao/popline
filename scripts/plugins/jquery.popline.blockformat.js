@@ -46,7 +46,8 @@
           }
         },
         h1: {
-          text: "H1",
+          iconClass: "icon-search",
+          // text: "H1",
           action: function(event) {
             wrap("H1");
           }
