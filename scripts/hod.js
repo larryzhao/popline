@@ -1,23 +1,32 @@
 ;(function($) {
-  function HolySelection(htmlText) {
-    this.htmlText = htmlText;
+  function HolySelection(text) {
+    this.text = text;
   }
   
-  HolySelection.prototype.length = function() {
-    return this.htmlText.length;
-  }
+  // HolySelection.prototype.htmlText = function() {
+  //   return this.htmlText;
+  // }
+
+  // HolySelection.prototype.text = function() {
+  //   return this.text;
+  // }
 
   $.holySelection = {
     "init": function(){
       if (window.getSelection) {
-        $.holySelection.getSelection = $.holySelection._getSelectionText;
+        $.holySelection.getSelection = $.holySelection._getSelection;
       } else {
-        $.holySelection.getSelection = $.holySelection._getSelectionTextIE8;
+        $.holySelection.getSelection = $.holySelection._getSelectionIE8;
       }
     },
 
-    "_getSelectionText": function(){ return new HolySelection(window.getSelection().toString()) },
-    "_getSelectionTextIE8": function(){ return new HolySelection(document.selection.createRange().text); }
+    "_getSelection": function(){ 
+      return new HolySelection(window.getSelection().toString()) 
+    },
+
+    "_getSelectionIE8": function(){ 
+      return new HolySelection(document.selection.createRange().text); 
+    }
   }
 })(jQuery);
 

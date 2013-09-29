@@ -28,20 +28,15 @@
 
     var isTargetOrChild = $.contains($.popline.current.target.get(0), event.target) || $.popline.current.target.get(0) === event.target;
     var isBarOrChild = $.contains($.popline.current.bar.get(0), event.target) || $.popline.current.bar.get(0) === event.target;
+    
+    $.popline.current.currentSelection = $.holySelection.getSelection()
 
-    $.popline.current.currentSelection = $.holySelection.getSelection();
- 
-    if ((isTargetOrChild || isBarOrChild) && $.popline.current.currentSelection.length() > 0) {
-    // if ((isTargetOrChild || isBarOrChild)) {
+    if ((isTargetOrChild || isBarOrChild) && $.popline.current.currentSelection.text.length > 0 && !$.popline.current.keepSlientWhenBlankSelected()) {
       var target= $.popline.current.target, bar = $.popline.current.bar;
       if (bar.is(":hidden") || bar.is(":animated")) {
         bar.stop(true, true);
-        var left = null, top = null;
-        // var rect = window.getSelection().getRangeAt(0).getBoundingClientRect();
-        left = event.pageX - bar.width() / 2;
-        if (left < 0) left = 10;
-        top = event.pageY - bar.outerHeight() - parseInt(target.css('font-size')) / 2;
-        $.popline.current.show({left: left, top: top});
+        var pos = Position().mouseup(event);
+        $.popline.current.show(pos);
       }
     }else {
       $.popline.hideAllBar();
@@ -55,17 +50,9 @@
     },
     keyup: function(event) {
       var popline = $(this).data("popline"), bar = popline.bar;
-      if (!isIMEMode && window.getSelection().toString().length > 0) {
-        var left = null, top = null;
-        var rect = $.popline.getRect(), keyMoved = isKeyMove(popline.target);
-        if (keyMoved === DOWN || keyMoved === RIGHT) {
-          left = rect.right - bar.width() / 2;
-          top = $(document).scrollTop() + rect.bottom - bar.outerHeight() - parseInt($(this).css("font-size"));
-        }else if (keyMoved === UP || keyMoved === LEFT) {
-          left = rect.left - bar.width() / 2;
-          top = $(document).scrollTop() + rect.top - bar.outerHeight();
-        }
-        $.popline.current.show({left: left, top: top});
+      if (!isIMEMode && window.getSelection().toString().length > 0 && !popline.keepSlientWhenBlankSelected()) {
+        var pos = Position().keyup(event);
+        $.popline.current.show(pos);
       }else {
         $.popline.current.hide();
       }
@@ -78,25 +65,55 @@
     }
   }
 
-  var isKeyMove = function(target) {
-    var lastKeyPos = target.data('lastKeyPos');
-    currentRect = $.popline.boundingRect();
-    if ($.popline.utils.isNull(lastKeyPos)) {
-      return null;
-    }
-    if (currentRect.top === lastKeyPos.top && currentRect.bottom !== lastKeyPos.bottom) {
-      return DOWN;
-    }
-    if (currentRect.bottom === lastKeyPos.bottom && currentRect.top !== lastKeyPos.top) {
-      return UP;
-    }
-    if (currentRect.right !== lastKeyPos.right) {
-      return RIGHT;
-    }
-    if (currentRect.left !== lastKeyPos.left) {
-      return LEFT;
-    }
-    return NONE;
+  var Position = function() {
+    var target= $.popline.current.target, bar = $.popline.current.bar, positionType = $.popline.current.settings.position;
+
+    var positions = {
+      "fixed": {
+        mouseup: function(event) {
+          var rect = window.getSelection().getRangeAt(0).getBoundingClientRect();
+          var left = event.pageX - bar.width() / 2;
+          var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+          if (left < 0) left = 10;
+          var top = scrollTop + rect.top - bar.outerHeight() - 10;
+          return {left: left, top: top};
+        },
+        keyup: function(event) {
+          var left = null, top = null;
+          var rect = $.popline.getRect(), keyMoved = $.popline.current.isKeyMove();
+          if (keyMoved === DOWN || keyMoved === RIGHT) {
+            left = rect.right - bar.width() / 2;
+          }else if (keyMoved === UP || keyMoved === LEFT) {
+            left = rect.left - bar.width() / 2;
+          }
+          var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+          top = scrollTop + rect.top - bar.outerHeight() - 10;
+          return {left: left, top: top};
+        }
+      },
+      "relative": {
+        mouseup: function(event) {
+          var left = event.pageX - bar.width() / 2;
+          if (left < 0) left = 10;
+          var top = event.pageY - bar.outerHeight() - parseInt(target.css('font-size')) / 2;
+          return {left: left, top: top};
+        },
+        keyup: function(event) {
+          var left = null, top = null;
+          var rect = $.popline.getRect(), keyMoved = $.popline.current.isKeyMove();
+          if (keyMoved === DOWN || keyMoved === RIGHT) {
+            left = rect.right - bar.width() / 2;
+            top = $(document).scrollTop() + rect.bottom - bar.outerHeight() - parseInt(target.css("font-size"));
+          }else if (keyMoved === UP || keyMoved === LEFT) {
+            left = rect.left - bar.width() / 2;
+            top = $(document).scrollTop() + rect.top - bar.outerHeight();
+          }
+          return {left: left, top: top};
+        }
+      }
+    };
+
+    return positions[positionType];
   };
 
   $.fn.popline = function(options) {
@@ -105,9 +122,13 @@
     //   return;
     // }
 
+    _arguments = arguments;
     this.each(function() {
-      if (typeof(options) === "string" && $(this).data("popline")) {
-        $(this).data("popline")[options]();
+      if (_arguments.length >= 1 && typeof(_arguments[0]) === "string" && $(this).data("popline")) {
+        var func = $(this).data("popline")[_arguments[0]];
+        if (typeof(func) === "function") {
+          func.apply($(this).data("popline"), Array.prototype.slice.call(_arguments, 1));
+        }
       }else if (!$(this).data("popline")) {
         var popline = new $.popline(options, this);
       }
@@ -126,6 +147,7 @@
 
   $.popline = function(options, target) {
     this.settings = $.extend(true, {}, $.popline.defaults, options);
+    this.setPosition(this.settings.position);
     this.target = $(target);
     this.init();
     $.popline.addInstance(this);
@@ -137,7 +159,9 @@
       zIndex: 9999,
       mode: "edit",
       enable: null,
-      disable: null
+      disable: null,
+      position: "fixed",
+      keepSlientWhenBlankSelected: true
     },
 
     instances: [],
@@ -208,6 +232,10 @@
 
             if (button.text) {
               $button.children(".btn").append("<span class='text " + (button.textClass || '') + "'>" + button.text + "</span>");
+            }
+
+            if (button.bgColor) {
+              $button.css({'background-color': button.bgColor});
             }
 
             if ($.isFunction(button.beforeShow)) {
@@ -319,6 +347,39 @@
             }
           });
         }
+      },
+
+      keepSlientWhenBlankSelected: function() {
+        if (this.settings.keepSlientWhenBlankSelected && $.trim($.popline.current.currentSelection.text) === ""){
+          return true;
+        }else {
+          return false;
+        }
+      },
+
+      isKeyMove: function() {
+        var lastKeyPos = this.target.data('lastKeyPos');
+        currentRect = $.popline.boundingRect();
+        if ($.popline.utils.isNull(lastKeyPos)) {
+          return null;
+        }
+        if (currentRect.top === lastKeyPos.top && currentRect.bottom !== lastKeyPos.bottom) {
+          return DOWN;
+        }
+        if (currentRect.bottom === lastKeyPos.bottom && currentRect.top !== lastKeyPos.top) {
+          return UP;
+        }
+        if (currentRect.right !== lastKeyPos.right) {
+          return RIGHT;
+        }
+        if (currentRect.left !== lastKeyPos.left) {
+          return LEFT;
+        }
+        return NONE;
+      },
+
+      setPosition: function(position) {
+        this.settings.position = position === "relative" ? "relative" : "fixed";
       },
 
       beforeShowCallbacks: [],
