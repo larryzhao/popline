@@ -263,6 +263,7 @@
                          .children("ul").show().end()
                   });
                   event.stopPropagation();
+                  // event.preventDefault();
                 }
               });
             }else if($.isFunction(button.action)) {
