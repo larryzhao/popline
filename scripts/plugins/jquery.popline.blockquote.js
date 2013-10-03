@@ -17,11 +17,14 @@
         
         var selection = $.holySelection.getSelection();
         var node = $.popline.utils.findNodeWithTags(selection.focusNode, 'BLOCKQUOTE');
+        // var node = $.popline.utils.findNodeWithTags(selection.focusNode, 'h3');
 
         if (node) {
-          document.execCommand('formatblock', false, 'P');
+          // document.execCommand('formatblock', false, '<h1>');
+          document.execCommand('formatblock', false, '<P>');
         } else {
-          document.execCommand('formatblock', false, 'BLOCKQUOTE');
+          document.execCommand('formatblock', false, '<BLOCKQUOTE>');
+          // document.execCommand('formatblock', false, '<h3>');
         }
       }
     }

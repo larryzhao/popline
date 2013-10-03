@@ -26,7 +26,7 @@
       var sel = window.getSelection();
       var boundingRect = sel.getRangeAt(0).getBoundingClientRect();
       var text = sel.toString();
-      var focusNode = sel.focusNode();
+      var focusNode = sel.focusNode;
       var rect = { 
         "top": boundingRect.top, 
         "bottom": boundingRect.bottom, 

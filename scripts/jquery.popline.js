@@ -50,7 +50,7 @@
     },
     keyup: function(event) {
       var popline = $(this).data("popline"), bar = popline.bar;
-      if (!isIMEMode && window.getSelection().toString().length > 0 && !popline.keepSlientWhenBlankSelected()) {
+      if (!isIMEMode && $.holySelection.getSelection().text.length > 0 && !popline.keepSlientWhenBlankSelected()) {
         var pos = Position().keyup(event);
         $.popline.current.show(pos);
       }else {
@@ -58,7 +58,8 @@
       }
     },
     keydown: function(event) {
-      var rects = window.getSelection().getRangeAt(0).getClientRects();
+      // var rects = window.getSelection().getRangeAt(0).getClientRects();
+      var rects = $.holySelection.getSelection().boundingRect
       if (rects.length > 0) {
         $(this).data('lastKeyPos', $.popline.boundingRect());
       }
