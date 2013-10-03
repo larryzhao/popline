@@ -13,11 +13,14 @@
       iconClass: "icon-quote-left",
       mode: "edit",
       action: function(event, popline) {
-        var selection = window.getSelection();
+        // var selection = window.getSelection();
+        
+        var selection = $.holySelection.getSelection();
         var node = $.popline.utils.findNodeWithTags(selection.focusNode, 'BLOCKQUOTE');
+
         if (node) {
           document.execCommand('formatblock', false, 'P');
-        }else {
+        } else {
           document.execCommand('formatblock', false, 'BLOCKQUOTE');
         }
       }

@@ -253,7 +253,7 @@
               $subbar = $("<ul class='subbar'></ul>");
               $button.append($subbar);
               makeButtons.call(this, $subbar, button.buttons);
-              $button.mousedown(function(event) {
+              $button.click(function(event) {
                 var _this = this;
                 if (!$(this).hasClass("boxed")) {
                   me.switchBar($(this), function() {
@@ -265,7 +265,7 @@
                 }
               });
             }else if($.isFunction(button.action)) {
-              $button.mousedown((function(button) {
+              $button.click((function(button) {
                   return function(event) {
                     button.action.call(this, event, me);
                   }
@@ -463,8 +463,7 @@
         }
         while (node) {
           if (node.nodeType !== 3) {
-            // var index = tags.indexOf(node.tagName);
-            var index = $.inArray(node.tagName, tags);
+            var index = tags.indexOf(node.tagName);
             if (index !== -1) {
               return node;
             }

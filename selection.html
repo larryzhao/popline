@@ -17,6 +17,11 @@
         // $('#output').append('<li>' + $.holySelection.getSelection().htmlText + '</li>');
         document.execCommand('bold')
       });
+
+      $('#test').click(function(){
+        alert('abc');
+        document.execCommand('bold');
+      });
     });
   </script>
 </head>
@@ -26,6 +31,7 @@
     The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.</div>
 
   <button id="select">Select</button>
+  <li id="test"><span class="btn" style=""><i class="icon-quote-left"></i></span></li>
 
   <ul id="output"></ul>
 </body>
